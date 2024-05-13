@@ -1,5 +1,3 @@
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -8,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.data"
+    namespace = "com.example.main"
     compileSdk = SdkVersions.compileSdk
 
     defaultConfig {
@@ -19,25 +17,12 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-
-            // 개발여부설정 : false
-            buildConfigField ("boolean", "DEV", "false")
-            // API KEY
-            buildConfigField("String", "REST_API_KET", getKakaoRestApiKey())
-            // Base Url
-            buildConfigField("String", "BASE_URL", getKakaoBaseUrl())
-
-        }
-        getByName("debug") {
-            // 개발여부설정 : true
-            buildConfigField("boolean", "DEV", "true")
-            // API KEY
-            buildConfigField("String", "REST_API_KET", getKakaoDevRestApiKey())
-            // Base Url
-            buildConfigField("String", "BASE_URL", getKakaoDevBaseUrl())
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -48,17 +33,17 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        dataBinding = true
+        viewBinding = true
         buildConfig = true
     }
 }
 
-fun getKakaoRestApiKey(): String = gradleLocalProperties(rootDir).getProperty("KAKAO_REST_API_KEY", "")
-fun getKakaoDevRestApiKey(): String = gradleLocalProperties(rootDir).getProperty("KAKAO_DEV_REST_API_KEY", "")
-fun getKakaoBaseUrl(): String = gradleLocalProperties(rootDir).getProperty("KAKAO_BASE_URL", "")
-fun getKakaoDevBaseUrl(): String = gradleLocalProperties(rootDir).getProperty("KAKAO_DEV_BASE_URL", "")
-
 dependencies {
+    implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:ui"))
+
     // AndroidX
     implementation(Dependency.AndroidX.CORE)
     implementation(Dependency.AndroidX.APPCOMPAT)
@@ -66,6 +51,7 @@ dependencies {
     implementation(Dependency.AndroidX.ACTIVITY)
     implementation(Dependency.AndroidX.FRAGMENT)
     implementation(Dependency.AndroidX.LIFECYCLE_VIEW_MODEL)
+    implementation(Dependency.AndroidX.SPLASH_SCREEN)
 
     // AndroidX Test
     androidTestImplementation(Dependency.AndroidX.TEST_EXT_JUNIT)
@@ -92,6 +78,11 @@ dependencies {
     implementation(Dependency.OkHttp.LOGGER_INTERCEPTOR)
     implementation(Dependency.OkHttp.OKHTTP_PROFILER)
 
+    // Glide
+    kapt(Dependency.Glide.GLIDE_COMPILER)
+    implementation(Dependency.Glide.GLIDE_OKHTTP_INTEGRATION)
+    implementation(Dependency.Glide.GLIDE_TRANSFORMATIONS)
+
     // Dagger Hilt
     implementation(Dependency.DaggerHilt.DAGGER_HILT)
     kapt(Dependency.DaggerHilt.DAGGER_HILT_COMPILER)
@@ -100,6 +91,9 @@ dependencies {
     // Coroutine
     implementation(Dependency.Coroutines.COROUTINES)
     implementation(Dependency.Coroutines.COROUTINES_CORE)
+
+    // Logger
+    implementation(Dependency.Logger.LOGGER)
 
 }
 // Allow references to generated code
