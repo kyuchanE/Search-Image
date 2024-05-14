@@ -1,5 +1,6 @@
 package com.example.domain.usecase
 
+import com.example.domain.model.NetworkResult
 import com.example.domain.model.SearchVClipData
 import com.example.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,7 @@ class GetSearchVClipUseCase @Inject constructor(
         sort: String,
         page: Int,
         size: Int,
-    ): Flow<SearchVClipData?> = searchRepository.reqSearchVClipData(
+    ): Flow<NetworkResult<SearchVClipData?>> = searchRepository.reqSearchVClipData(
         query,
         sort,
         page,

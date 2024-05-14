@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import com.example.data.api.SearchApi
+import com.example.domain.model.NetworkResult
 import com.example.domain.model.SearchImageData
 import com.example.domain.model.SearchVClipData
 import com.example.domain.repository.SearchRepository
@@ -18,7 +19,7 @@ class SearchRepositoryImpl @Inject constructor(
         sort: String,
         page: Int,
         size: Int
-    ): Flow<SearchImageData?> = flow {
+    ): Flow<NetworkResult<SearchImageData?>> = flow {
         val response = searchApi.reqSearchImage(
             query,
             sort,
@@ -27,9 +28,9 @@ class SearchRepositoryImpl @Inject constructor(
         )
 
         when(response.code()) {
-            in 200..299 -> emit(response.body()?.toDomain())
+            in 200..299 -> emit(NetworkResult.Success(response.body()?.toDomain()))
             else -> {
-
+                emit(NetworkResult.Error(response.code().toString(), response.errorBody().toString()))
             }
         }
     }
@@ -39,7 +40,7 @@ class SearchRepositoryImpl @Inject constructor(
         sort: String,
         page: Int,
         size: Int
-    ): Flow<SearchVClipData?> = flow {
+    ): Flow<NetworkResult<SearchVClipData?>> = flow {
         val response = searchApi.reqSearchVClip(
             query,
             sort,
@@ -48,9 +49,9 @@ class SearchRepositoryImpl @Inject constructor(
         )
 
         when(response.code()) {
-            in 200..299 -> emit(response.body()?.toDomain())
+            in 200..299 -> emit(NetworkResult.Success(response.body()?.toDomain()))
             else -> {
-
+                emit(NetworkResult.Error(response.code().toString(), response.errorBody().toString()))
             }
         }
     }

@@ -21,7 +21,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     }
 
-    override fun init() {
+    override fun initView() {
 
 //        viewModel.fetchTest(
 //            query = "고양이",

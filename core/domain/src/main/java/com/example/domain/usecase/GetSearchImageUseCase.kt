@@ -1,5 +1,6 @@
 package com.example.domain.usecase
 
+import com.example.domain.model.NetworkResult
 import com.example.domain.model.SearchImageData
 import com.example.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +14,7 @@ class GetSearchImageUseCase @Inject constructor(
         sort: String,
         page: Int,
         size: Int,
-    ): Flow<SearchImageData?> = searchRepository.reqSearchImageData(
+    ): Flow<NetworkResult<SearchImageData?>> = searchRepository.reqSearchImageData(
         query,
         sort,
         page,

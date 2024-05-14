@@ -1,5 +1,5 @@
 <resources>
-
     <string name="feature_main_search">검색</string>
     <string name="feature_main_favorites">즐겨찾기</string>
+    <string name="feature_main_search_hint">검색어를 입력해주세요.</string>
 </resources>
