@@ -9,5 +9,5 @@ sealed class NetworkResult<T>(var data: T? = null, var code: String? = null, var
         var exception: Throwable? = null
     ): NetworkResult<T>(null, errorcode, msg)
 
-    class Loading<T>: NetworkResult<T>()
+    class Loading<T>: NetworkResult<T>(null, null, null)
 }

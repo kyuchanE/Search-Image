@@ -50,7 +50,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
-    implementation(project(":feature:main"))
+    implementation(project(":feature:search"))
 
     // AndroidX
     implementation(Dependency.AndroidX.CORE)
@@ -67,6 +67,7 @@ dependencies {
 
     // Google
     implementation(Dependency.Google.MATERIAL)
+    implementation(Dependency.Google.GSON)
 
     // JUnit
     testImplementation(Dependency.JUnit.JUNIT)

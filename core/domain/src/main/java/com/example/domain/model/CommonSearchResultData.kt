@@ -4,8 +4,9 @@ data class CommonSearchResultData (
     val data: MutableList<CommonSearchData>? = null,
     val errorCode: String? = null,
     val errorMsg: String? = null,
-    val isImageResultPageEnd: Boolean = false,
-    val isVClipResultPageEnd: Boolean = false,
+    val isImageResultPageEnd: Boolean? = null,
+    val isVClipResultPageEnd: Boolean? = null,
+    val page: Int = 0,
 ) {
 
     data class CommonSearchData (
@@ -14,5 +15,6 @@ data class CommonSearchResultData (
         val imgUrl: String,
         val url: String,
         val category: String? =  null,
+        var isFavorite: Boolean = false,
     )
 }

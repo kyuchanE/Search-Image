@@ -28,6 +28,7 @@ object Dependency {
 
     object Google {
         const val MATERIAL = "com.google.android.material:material:1.12.0"
+        const val GSON = "com.google.code.gson:gson:2.10.1"
     }
 
     object JUnit {

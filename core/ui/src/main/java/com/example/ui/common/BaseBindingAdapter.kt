@@ -21,6 +21,12 @@ object BaseBindingAdapter {
         visibility = if (value) View.VISIBLE else View.GONE
     }
 
+    @BindingAdapter("isSelected")
+    @JvmStatic
+    fun View.isSelected(value: Boolean) {
+        isSelected = value
+    }
+
     @BindingAdapter("searchHintStr")
     @JvmStatic
     fun TextView.searchHintStr(str: String) {

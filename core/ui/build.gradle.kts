@@ -44,6 +44,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+
     // AndroidX
     implementation(Dependency.AndroidX.CORE)
     implementation(Dependency.AndroidX.APPCOMPAT)
@@ -58,6 +60,7 @@ dependencies {
 
     // Google
     implementation(Dependency.Google.MATERIAL)
+    implementation(Dependency.Google.GSON)
 
     // JUnit
     testImplementation(Dependency.JUnit.JUNIT)

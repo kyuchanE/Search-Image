@@ -3,10 +3,17 @@ package com.example.ui.common
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ViewDataBinding
+import com.example.ui.R
+import com.example.ui.databinding.LoadingBinding
 import com.example.ui.utils.bind
+import com.example.ui.utils.bindView
+import com.example.ui.utils.gone
+import com.example.ui.utils.show
+import java.util.concurrent.atomic.AtomicInteger
 
 abstract class BaseActivity<B: ViewDataBinding>: AppCompatActivity() {
 
@@ -21,14 +28,27 @@ abstract class BaseActivity<B: ViewDataBinding>: AppCompatActivity() {
      */
     abstract val layoutId: Int
 
+    /** loading **/
+    private lateinit var loadingBinding: LoadingBinding
+
+    /** 로딩 뷰 사용 카운트 **/
+    private val loadingCount = AtomicInteger()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = bind(layoutId)
         binding.lifecycleOwner = this
 
-        initView()
+        loadingBinding = bindView(R.layout.loading)
+        (binding.root as ViewGroup).addView(
+            loadingBinding.root,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+
         initObserve()
+        initView()
     }
 
     abstract fun initView()
@@ -57,6 +77,28 @@ abstract class BaseActivity<B: ViewDataBinding>: AppCompatActivity() {
         currentFocus?.let {
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
+
+    /**
+     * show loading
+     */
+    fun showLoading() {
+        if (loadingCount.incrementAndGet() == 1) {
+            runOnUiThread {
+                loadingBinding.root.show()
+            }
+        }
+    }
+
+    /**
+     * hide loading
+     */
+    fun hideLoading() {
+        if (loadingCount.decrementAndGet() == 0) {
+            runOnUiThread {
+                loadingBinding.root.gone()
+            }
         }
     }
 
