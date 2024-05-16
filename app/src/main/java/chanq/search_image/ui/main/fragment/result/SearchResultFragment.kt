@@ -23,14 +23,14 @@ class SearchResultFragment: BaseFragment<FragmentSearchResultBinding>() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private lateinit var searchResultAdapter: SearchResultAdapter
+    private lateinit var searchResultListItemAdapter: SearchResultListItemAdapter
 
 
     override fun initFragmentView() {
         binding.searchStr = baseActivity.getString(R.string.feature_main_search_hint)
 
-        searchResultAdapter = SearchResultAdapter(
-            searchResultModelList = mutableListOf(),
+        searchResultListItemAdapter = SearchResultListItemAdapter(
+            searchResultList = mutableListOf(),
             searchResultClickEvent = { searchData ->
                 L.d("SearchResultAdapter click : ${searchData.title}")
                 (baseActivity as MainActivity).goDetailPage(searchData)
@@ -42,13 +42,13 @@ class SearchResultFragment: BaseFragment<FragmentSearchResultBinding>() {
         )
 
         with(binding.rvSearchResult) {
-            adapter = searchResultAdapter
+            adapter = searchResultListItemAdapter
             setOnScrollChangeListener { _, _, _, _, _ ->
                 // RecyclerView 마지막 아이템 값이 화면에 보이기 시작하면 페이징 시작
                 var findLastVisiblePosition = (this.layoutManager as LinearLayoutManager)
                     .findLastVisibleItemPosition()
 
-                if (findLastVisiblePosition in searchResultAdapter.itemCount - 1 .. searchResultAdapter.itemCount) {
+                if (findLastVisiblePosition in searchResultListItemAdapter.itemCount - 1 .. searchResultListItemAdapter.itemCount) {
                     (baseActivity as MainActivity).reqFetchSearch("고양이")
                 }
             }
@@ -77,22 +77,25 @@ class SearchResultFragment: BaseFragment<FragmentSearchResultBinding>() {
             }
             is NetworkResult.Success -> {
                 L.d("SearchResultFragment Success : $result ")
-                val searchResultModelList = mutableListOf<SearchResultModel>()
+                val dataList = mutableListOf<CommonSearchResultData.CommonSearchData>()
                 result.data?.let { searchResultData ->
                     searchResultData.data?.let {
-                        searchResultModelList.add(      // 검색 결과 리스트
-                            SearchResultModel.SearchResultList(itemList = it)
-                        )
-                        searchResultModelList.add(      // 하단 페이지 구분자 + loading icon
-                            SearchResultModel.SearchResultDivider(cntPage = searchResultData.page.toString())
-                        )
+                        it.forEachIndexed { index, commonSearchData ->
+                            if (it.lastIndex == index) {
+                                val addData = commonSearchData
+                                addData.isShowPage = true
+                                addData.page = searchResultData.page
+                                dataList.add(addData)
+                            } else {
+                                dataList.add(commonSearchData)
+                            }
+                        }
                     }
-                    if (searchResultAdapter.itemCount > 0)  // 페이지 구분 하단 로딩 View 제거
-                        searchResultAdapter.finishedLoading()
+
                     if (searchResultData.page == 1) {       // 새로운 검색 결과 (page == 1)
-                        searchResultAdapter.addItemListAfterClear(searchResultModelList)
+                        searchResultListItemAdapter.addItemListAfterClear(dataList)
                     } else {                                // 기존 검색 결과의 다른 페이지
-                        searchResultAdapter.addItemList(searchResultModelList)
+                        searchResultListItemAdapter.addItemList(dataList)
                     }
                 }
             }
@@ -104,5 +107,9 @@ class SearchResultFragment: BaseFragment<FragmentSearchResultBinding>() {
 
     fun moveScrollTop() {
         binding.rvSearchResult.smoothScrollToPosition(0)
+    }
+
+    fun changeFavoriteItem(item: CommonSearchResultData.CommonSearchData) {
+        searchResultListItemAdapter.changeFavorite(item)
     }
 }

@@ -21,6 +21,7 @@ class FavoritesFragment: BaseFragment<FragmentFavoritesBinding>() {
         get() = R.layout.fragment_favorites
 
     private val mainViewModel: MainViewModel by activityViewModels()
+    private var favoriteAdapter: FavoritesAdapter? = null
 
     override fun initFragmentView() {
         L.d("initView")
@@ -39,19 +40,25 @@ class FavoritesFragment: BaseFragment<FragmentFavoritesBinding>() {
     }
 
     private fun initFavoritesList(list: MutableList<CommonSearchResultData.CommonSearchData>) {
+        favoriteAdapter = FavoritesAdapter(
+            favoritesList = list,
+            favoriteItemClickEvent = { items ->
+                (baseActivity as MainActivity).goDetailPage(items)
+            },
+            favoritesClickEvent = { items ->
+                mainViewModel.clickFavorites(items)
+            }
+        )
+
         with(binding.rvFavorites) {
             isVisible = list.isNotEmpty()
-            adapter = FavoritesAdapter(
-                favoritesList = list,
-                favoriteItemClickEvent = { items ->
-                    (baseActivity as MainActivity).goDetailPage(items)
-                },
-                favoritesClickEvent = { items ->
-                    mainViewModel.clickFavorites(items)
-                }
-            )
+            adapter = favoriteAdapter
             layoutManager = GridLayoutManager(baseActivity, 2)
         }
 
+    }
+
+    fun changeFavoriteItem(item: CommonSearchResultData.CommonSearchData) {
+        favoriteAdapter?.changeFavorite(item)
     }
 }

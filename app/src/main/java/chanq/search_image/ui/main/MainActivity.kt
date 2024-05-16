@@ -2,6 +2,7 @@ package chanq.search_image.ui.main
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Typeface
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -12,12 +13,9 @@ import chanq.search_image.databinding.ActivityMainBinding
 import chanq.search_image.di.App
 import chanq.search_image.ui.main.fragment.favorites.FavoritesFragment
 import chanq.search_image.ui.main.fragment.result.SearchResultFragment
-import com.example.data.utils.PreferenceUtil.Companion.KEY_FAVORITE
 import com.example.detail.DetailActivity
-import com.example.detail.DetailActivity.Companion.KEY_IMG_URL
-import com.example.detail.DetailActivity.Companion.KEY_IS_FAVORITE
-import com.example.detail.DetailActivity.Companion.KEY_TITLE
 import com.example.detail.DetailActivity.Companion.RESULT_CODE_DETAIL
+import com.example.detail.DetailObject
 import com.example.domain.model.CommonSearchResultData
 import com.example.domain.model.NetworkResult
 import com.example.search.SearchActivity
@@ -57,6 +55,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 it.data?.let {  intentData ->
                     val searchStr: String = intentData.getStringExtra(KEY_SEARCH_STR)?.trim() ?: ""
                     if (searchStr.isNotEmpty()) {
+                        this.searchStr = searchStr
                         (fragmentList[0] as SearchResultFragment).changeSearchStr(searchStr)
                         showLoading()
                         reqFetchSearch(query = searchStr, isPageClear = true)
@@ -64,13 +63,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
             }
             RESULT_CODE_DETAIL -> {         // 상세 페이지
-
+                DetailObject.getDetailData()?.let {
+                    (fragmentList[0] as SearchResultFragment).changeFavoriteItem(it)
+                    (fragmentList[1] as FavoritesFragment).changeFavoriteItem(it)
+                    viewModel.clickFavorites(it)
+                }
+                DetailObject.clear()
             }
         }
     }
 
     override fun initView() {
         binding.isSelectedSearch = true
+        binding.searchTabTextStyle = R.style.selectedTabTextStyle
+        binding.favoriteTabTextStyle = R.style.defaultTabTextStyle
 
         initPageAdapter()
         initButtonClickListener()
@@ -139,12 +145,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             animTabBar(true)
             binding.vpMain.setCurrentItem(0, false)
             viewModel.fetchSearchImage( query = searchStr, isPageClear = true )
+            binding.searchTabTextStyle = R.style.selectedTabTextStyle
+            binding.favoriteTabTextStyle = R.style.defaultTabTextStyle
         } else if (binding.vpMain.currentItem == 0 && isSelectedSearch) {   // 검색 탭 중복
             (fragmentList[0] as SearchResultFragment).moveScrollTop()
         } else if (!binding.btnTabFavorites.isSelected && !isSelectedSearch) {  // 즐겨찾기 탭
             animTabBar(false)
             binding.vpMain.setCurrentItem(1, false)
             viewModel.getFavoritesList()
+            binding.searchTabTextStyle = R.style.defaultTabTextStyle
+            binding.favoriteTabTextStyle = R.style.selectedTabTextStyle
         }
     }
 
@@ -188,10 +198,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
      * 상세 페이지 호출
      */
     fun goDetailPage(item: CommonSearchResultData.CommonSearchData) {
+        DetailObject.setDetailData(item)
         Intent(this, DetailActivity::class.java).apply {
-            putExtra(KEY_TITLE, item.title)
-            putExtra(KEY_IMG_URL, item.imgUrl)
-            putExtra(KEY_IS_FAVORITE, item.isFavorite)
             activityResultLauncher.launch(this)
         }
     }

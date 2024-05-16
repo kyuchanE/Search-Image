@@ -1,5 +1,7 @@
 package com.example.detail
 
+import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import com.example.detail.databinding.ActivityDetailBinding
 import com.example.ui.common.BaseActivity
 import com.example.ui.utils.L
@@ -10,30 +12,46 @@ class DetailActivity : BaseActivity<ActivityDetailBinding>() {
     override val layoutId: Int
         get() = R.layout.activity_detail
 
+    private var firstFavoriteState = false
+
     companion object {
         const val RESULT_CODE_DETAIL = 2
-        const val KEY_POSITION = "KEY_POSITION"
-        const val KEY_TITLE = "KEY_TITLE"
-        const val KEY_IMG_URL = "KEY_IMG_URL"
-        const val KEY_IS_FAVORITE = "KEY_IS_FAVORITE"
     }
 
     override fun initView() {
         getIntentData()
         initButtonClickListener()
+        firstFavoriteState = DetailObject.getDetailData()?.isFavorite ?: false
+
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                goMainPage()
+            }
+        })
+
     }
 
     private fun initButtonClickListener() {
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { goMainPage() }
         binding.btnFavorite.setOnClickListener {
             it.isSelected = !it.isSelected
         }
     }
 
     private fun getIntentData() {
-        binding.strTitle = intent.getStringExtra(KEY_TITLE) ?: ""
-        binding.btnFavorite.isSelected = intent.getBooleanExtra(KEY_IS_FAVORITE, false)
-        binding.ivImg.loadUrl(intent.getStringExtra(KEY_IMG_URL) ?: "")
+        binding.strTitle = DetailObject.getDetailData()?.title ?: ""
+        binding.btnFavorite.isSelected = DetailObject.getDetailData()?.isFavorite ?: false
+        binding.ivImg.loadUrl(DetailObject.getDetailData()?.imgUrl ?: "")
+    }
+
+    private fun goMainPage() {
+        if (firstFavoriteState != binding.btnFavorite.isSelected) {
+            DetailObject.changeFavorite(binding.btnFavorite.isSelected)
+            setResult(RESULT_CODE_DETAIL)
+        } else {
+            DetailObject.clear()
+        }
+        finish()
     }
 
 }

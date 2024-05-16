@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import chanq.search_image.R
 import chanq.search_image.databinding.ItemFavoritesBinding
 import com.example.domain.model.CommonSearchResultData
+import com.example.domain.utils.compareFavorite
 import com.example.ui.utils.loadRound
 
 class FavoritesAdapter(
@@ -75,9 +76,20 @@ class FavoritesAdapter(
             isFavorite = !item.isFavorite,
         )
 
-        favoritesClickEvent(
-            itemList[position]
-        )
+        favoritesClickEvent(itemList[position])
+    }
 
+    fun changeFavorite(item: CommonSearchResultData.CommonSearchData) {
+        var changePos: Int? = null
+        itemList.forEachIndexed { index, commonSearchData ->
+            if (commonSearchData.compareFavorite(item)) {
+                changePos = index
+            }
+        }
+
+        changePos?.let { pos ->
+            itemList[pos] = item
+            notifyItemChanged(pos)
+        }
     }
 }

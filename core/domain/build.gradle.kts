@@ -76,6 +76,7 @@ dependencies {
     // Coroutine
     implementation(Dependency.Coroutines.COROUTINES)
     implementation(Dependency.Coroutines.COROUTINES_CORE)
+    implementation(Dependency.Coroutines.TEST)
 
 }
 // Allow references to generated code

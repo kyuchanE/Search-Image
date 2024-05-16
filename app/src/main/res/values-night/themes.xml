@@ -3,5 +3,25 @@
     <style name="Base.Theme.SearchImage" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="android:textViewStyle">@style/customTextViewFontStyle</item>
+        <item name="android:buttonStyle">@style/customButtonFontStyle</item>
+        <item name="android:editTextStyle">@style/customEditTextFontStyle</item>
+    </style>
+
+    <style name="customTextViewFontStyle" parent="Widget.AppCompat.TextView">
+        <item name="fontFamily">@font/pretendard</item>
+    </style>
+    <style name="customButtonFontStyle" parent="Widget.AppCompat.Button">
+        <item name="fontFamily">@font/pretendard</item>
+    </style>
+    <style name="customEditTextFontstyle" parent="Widget.AppCompat.EditText">
+        <item name="fontFamily">@font/pretendard</item>
+    </style>
+
+    <style name="selectedTabTextStyle">
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+    <style name="defaultTabTextStyle">
+        <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 </resources>

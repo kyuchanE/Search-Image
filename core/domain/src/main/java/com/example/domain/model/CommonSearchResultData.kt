@@ -16,5 +16,7 @@ data class CommonSearchResultData (
         val url: String,
         val category: String? =  null,
         var isFavorite: Boolean = false,
+        var isShowPage: Boolean = false,
+        var page: Int? = null,
     )
 }

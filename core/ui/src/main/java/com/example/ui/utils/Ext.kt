@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.di.GlideApp
 import com.example.ui.R
 import com.google.gson.JsonObject
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 ////////////////////////////// DataBinding //////////////////////////////
@@ -93,3 +94,18 @@ val Int.px2dp get() = (this / Resources.getSystem().displayMetrics.density).toIn
 val Int.dp2px get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 val Int.boolean get() = this > 0
 val Int.count get() = String.format(Locale.KOREA, "%,d", this)
+
+
+////////////////////////////// Date //////////////////////////////
+
+fun String.toDate(): String {
+    var returnStr = ""
+    return try {
+        val date = SimpleDateFormat("YYYY-MM-DD'T'hh:mm:ss.SSSZ", Locale.KOREA).parse(this)
+        returnStr = SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분 ss초").format(date)
+        returnStr
+    } catch (e: Exception) {
+        L.d("toDate Exception : ${e.message}")
+        returnStr
+    }
+}

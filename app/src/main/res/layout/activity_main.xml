@@ -5,6 +5,14 @@
         <variable
             name="isSelectedSearch"
             type="Boolean" />
+
+        <variable
+            name="searchTabTextStyle"
+            type="Integer" />
+
+        <variable
+            name="favoriteTabTextStyle"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -44,12 +52,12 @@
                         android:layout_weight="1"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textStyle="bold"
                         android:text="@string/feature_main_search"
                         android:textSize="16sp"
                         android:textColor="@color/color_selector_222222_888888"
                         android:gravity="center"
                         android:background="@android:color/transparent"
+                        bindTextViewStyle="@{searchTabTextStyle}"
                         setViewSelected="@{isSelectedSearch}"/>
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -60,12 +68,12 @@
                         android:layout_weight="1"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        android:textStyle="bold"
                         android:text="@string/feature_main_favorites"
                         android:textSize="16sp"
                         android:textColor="@color/color_selector_222222_888888"
                         android:gravity="center"
                         android:background="@android:color/transparent"
+                        bindTextViewStyle="@{favoriteTabTextStyle}"
                         setViewSelected="@{!isSelectedSearch}"/>
 
                 </LinearLayout>

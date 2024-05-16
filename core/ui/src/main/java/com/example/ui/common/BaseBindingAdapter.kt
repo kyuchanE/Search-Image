@@ -3,6 +3,7 @@ package com.example.ui.common
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.example.ui.R
@@ -45,6 +46,12 @@ object BaseBindingAdapter {
         } else {
             setImageDrawable(ContextCompat.getDrawable(this.context, R.drawable.icon_video))
         }
+    }
+
+    @BindingAdapter("bindTextViewStyle")
+    @JvmStatic
+    fun TextView.bindTextViewStyle(styleResourceId: Int) {
+        if(styleResourceId != null) this.setTextAppearance(styleResourceId)
     }
 
 }

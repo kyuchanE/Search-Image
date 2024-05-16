@@ -8,12 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import chanq.search_image.R
 import chanq.search_image.databinding.ItemSearchResultListBinding
 import com.example.domain.model.CommonSearchResultData
+import com.example.domain.utils.compareFavorite
 import com.example.ui.utils.loadRound
+import com.example.ui.utils.setShowOrGone
+import com.example.ui.utils.show
+import com.example.ui.utils.toDate
 
 class SearchResultListItemAdapter(
     searchResultList: MutableList<CommonSearchResultData.CommonSearchData>,
     private val searchResultClickEvent: (items: CommonSearchResultData.CommonSearchData) -> Unit = {_ ->},
-    private var favoritesClickEvent: (items: CommonSearchResultData.CommonSearchData, itemList: MutableList<CommonSearchResultData.CommonSearchData>) -> Unit = { _, _ ->},
+    private var favoritesClickEvent: (items: CommonSearchResultData.CommonSearchData) -> Unit = { _ ->},
 ): RecyclerView.Adapter<SearchResultListItemAdapter.ResultItemViewHolder>() {
     private val itemList: MutableList<CommonSearchResultData.CommonSearchData> = mutableListOf()
 
@@ -31,9 +35,10 @@ class SearchResultListItemAdapter(
                 with(itemList[position]) {
                     b.isTypeImage = this.category != null
                     b.strUrl = this.url
-                    b.strDateTime = this.datetime
+                    b.strDateTime = this.datetime.toDate()
                     b.strCategory = this.category ?: ""
                     b.strTitle = this.title
+                    b.cntPage = (this.page ?: 0).toString()
                     b.ivThumbnail.loadRound(this.imgUrl, 14)
                     b.llResultItem.setOnClickListener {
                         searchResultClickEvent(this)
@@ -43,6 +48,8 @@ class SearchResultListItemAdapter(
                         it.isSelected = !it.isSelected
                         clickFavorite(position)
                     }
+
+                    b.llBottom.setShowOrGone(this.isShowPage)
                 }
             }
         }
@@ -63,7 +70,7 @@ class SearchResultListItemAdapter(
     fun addItemList(list: MutableList<CommonSearchResultData.CommonSearchData>) {
         val lastPos = itemList.size
         itemList.addAll(list)
-        notifyItemInserted(lastPos)
+        notifyItemRangeChanged(lastPos, itemList.lastIndex)
     }
 
     fun addItemListAfterClear(list: MutableList<CommonSearchResultData.CommonSearchData>) {
@@ -72,7 +79,7 @@ class SearchResultListItemAdapter(
         notifyDataSetChanged()
     }
 
-    private fun clickFavorite(position: Int) {
+    fun clickFavorite(position: Int) {
         val item = itemList[position]
         itemList[position] = CommonSearchResultData.CommonSearchData(
             datetime = item.datetime,
@@ -83,9 +90,21 @@ class SearchResultListItemAdapter(
             isFavorite = !item.isFavorite,
         )
 
-        favoritesClickEvent(
-            itemList[position],
-            itemList
-        )
+        favoritesClickEvent(itemList[position])
+    }
+
+    fun changeFavorite(item: CommonSearchResultData.CommonSearchData) {
+        var changePos: Int? = null
+        itemList.forEachIndexed { index, commonSearchData ->
+            if (commonSearchData.compareFavorite(item)) {
+                changePos = index
+            }
+        }
+
+        changePos?.let { pos ->
+            itemList[pos] = item
+            notifyItemChanged(pos)
+        }
+
     }
 }
