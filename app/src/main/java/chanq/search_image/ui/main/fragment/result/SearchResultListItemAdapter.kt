@@ -13,7 +13,7 @@ import com.example.ui.utils.loadRound
 class SearchResultListItemAdapter(
     searchResultList: MutableList<CommonSearchResultData.CommonSearchData>,
     private val searchResultClickEvent: (items: CommonSearchResultData.CommonSearchData) -> Unit = {_ ->},
-    private val favoritesClickEvent: (items: CommonSearchResultData.CommonSearchData, itemList: MutableList<CommonSearchResultData.CommonSearchData>) -> Unit = {_, _ ->},
+    private var favoritesClickEvent: (items: CommonSearchResultData.CommonSearchData, itemList: MutableList<CommonSearchResultData.CommonSearchData>) -> Unit = { _, _ ->},
 ): RecyclerView.Adapter<SearchResultListItemAdapter.ResultItemViewHolder>() {
     private val itemList: MutableList<CommonSearchResultData.CommonSearchData> = mutableListOf()
 
@@ -40,6 +40,7 @@ class SearchResultListItemAdapter(
                     }
                     b.btnFavorite.isSelected = this.isFavorite
                     b.btnFavorite.setOnClickListener {
+                        it.isSelected = !it.isSelected
                         clickFavorite(position)
                     }
                 }
@@ -79,7 +80,7 @@ class SearchResultListItemAdapter(
             imgUrl = item.imgUrl,
             url = item.url,
             category = item.category,
-            isFavorite = true
+            isFavorite = !item.isFavorite,
         )
 
         favoritesClickEvent(

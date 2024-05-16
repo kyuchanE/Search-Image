@@ -33,10 +33,11 @@ class SearchResultFragment: BaseFragment<FragmentSearchResultBinding>() {
             searchResultModelList = mutableListOf(),
             searchResultClickEvent = { searchData ->
                 L.d("SearchResultAdapter click : ${searchData.title}")
+                (baseActivity as MainActivity).goDetailPage(searchData)
             },
             favoritesClickEvent = { searchData ->
                 L.d("favoritesClickEvent click : ${searchData.title}")
-                App.preferences.setFavoriteList(searchData)
+                mainViewModel.clickFavorites(searchData)
             }
         )
 

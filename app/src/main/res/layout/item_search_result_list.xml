@@ -24,9 +24,6 @@
             name="strTitle"
             type="String" />
 
-        <variable
-            name="isFavorite"
-            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

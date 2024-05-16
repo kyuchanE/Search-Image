@@ -73,6 +73,7 @@ dependencies {
 
     // Google
     implementation(Dependency.Google.MATERIAL)
+    implementation(Dependency.Google.GSON)
 
     // JUnit
     testImplementation(Dependency.JUnit.JUNIT)

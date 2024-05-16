@@ -3,14 +3,10 @@ package chanq.search_image.ui.main
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.CommonSearchResultData
 import com.example.domain.model.NetworkResult
-import com.example.domain.usecase.GetSearchImageUseCase
+import com.example.domain.repository.FavoritesRepository
 import com.example.domain.usecase.GetSearchItemsUseCase
-import com.example.domain.usecase.GetSearchVClipUseCase
 import com.example.ui.common.BaseViewModel
-import com.example.ui.utils.L
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
@@ -22,10 +18,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getSearchItemsUseCase: GetSearchItemsUseCase,
+    private val favoritesRepository: FavoritesRepository,
 ): BaseViewModel() {
 
     private val _searchNetworkResult = MutableSharedFlow<NetworkResult<CommonSearchResultData>>()
     var searchNetworkResult = _searchNetworkResult.asSharedFlow()
+
+    private val _favoritesList = MutableSharedFlow<MutableList<CommonSearchResultData.CommonSearchData>>()
+    var favoritesList = _favoritesList.asSharedFlow()
 
     private var cntPage = 1
     private var isImageResultPageEnd: Boolean = false
@@ -79,4 +79,17 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    fun clickFavorites(item: CommonSearchResultData.CommonSearchData) {
+        viewModelScope.launch {
+            favoritesRepository.clickFavorite(item)
+        }
+    }
+
+    fun getFavoritesList() {
+        viewModelScope.launch {
+            _favoritesList.emit(favoritesRepository.loadData())
+        }
+    }
+
 }

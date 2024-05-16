@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.di.GlideApp
 import com.example.ui.R
+import com.google.gson.JsonObject
 import java.util.Locale
 
 ////////////////////////////// DataBinding //////////////////////////////
@@ -64,6 +65,16 @@ fun View.setShowOrGone(isShow: Boolean): View {
 }
 
 ////////////////////////////// ImageView //////////////////////////////
+
+fun ImageView.loadUrl(url: String): ImageView {
+    GlideApp.with(context)
+        .load(url)
+        .error(R.drawable.bg_error_img_load)
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(this)
+    return this
+}
+
 
 fun ImageView.loadRound(url: String, round: Int): ImageView {
     GlideApp.with(context)

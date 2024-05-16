@@ -1,35 +1,28 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "chanq.search_image"
+    namespace = "com.example.detail"
     compileSdk = SdkVersions.compileSdk
 
     defaultConfig {
-        applicationId = "chanq.search_image"
         minSdk = SdkVersions.minSdk
-        targetSdk = SdkVersions.targetSdk
-        versionCode = AppVersions.androidVersionCode
-        versionName = AppVersions.androidVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-
-            // 개발여부설정 : false
-            buildConfigField ("boolean", "DEV", "false")
-        }
-        getByName("debug") {
-            // 개발여부설정 : true
-            buildConfigField("boolean", "DEV", "true")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -50,8 +43,6 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:ui"))
-    implementation(project(":feature:search"))
-    implementation(project(":feature:detail"))
 
     // AndroidX
     implementation(Dependency.AndroidX.CORE)
@@ -61,6 +52,9 @@ dependencies {
     implementation(Dependency.AndroidX.FRAGMENT)
     implementation(Dependency.AndroidX.LIFECYCLE_VIEW_MODEL)
     implementation(Dependency.AndroidX.SPLASH_SCREEN)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // AndroidX Test
     androidTestImplementation(Dependency.AndroidX.TEST_EXT_JUNIT)

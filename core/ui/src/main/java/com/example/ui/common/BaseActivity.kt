@@ -84,10 +84,9 @@ abstract class BaseActivity<B: ViewDataBinding>: AppCompatActivity() {
      * show loading
      */
     fun showLoading() {
-        if (loadingCount.incrementAndGet() == 1) {
-            runOnUiThread {
+        runOnUiThread {
+            if (!loadingBinding.root.isShown)
                 loadingBinding.root.show()
-            }
         }
     }
 
@@ -95,10 +94,9 @@ abstract class BaseActivity<B: ViewDataBinding>: AppCompatActivity() {
      * hide loading
      */
     fun hideLoading() {
-        if (loadingCount.decrementAndGet() == 0) {
-            runOnUiThread {
+        runOnUiThread {
+            if (loadingBinding.root.isShown)
                 loadingBinding.root.gone()
-            }
         }
     }
 

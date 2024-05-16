@@ -32,8 +32,8 @@ abstract class BaseFragment<B: ViewDataBinding>: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initFragmentView()
         initObserve()
+        initFragmentView()
     }
 
     abstract fun initFragmentView()

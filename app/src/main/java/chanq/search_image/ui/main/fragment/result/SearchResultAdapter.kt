@@ -43,7 +43,6 @@ class SearchResultAdapter(
                             changeFavorite(position, list)
                         },
                     )
-
                     it.rvPageList.adapter = listAdapter
                 }
             }
@@ -115,7 +114,6 @@ class SearchResultAdapter(
         itemList[pos] = SearchResultModel.SearchResultList(
             itemList = list
         )
-        notifyItemChanged(pos)
     }
 
     fun finishedLoading() {

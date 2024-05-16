@@ -10,15 +10,20 @@ import androidx.lifecycle.lifecycleScope
 import chanq.search_image.R
 import chanq.search_image.databinding.ActivityMainBinding
 import chanq.search_image.di.App
-import chanq.search_image.ui.main.fragment.FavoritesFragment
+import chanq.search_image.ui.main.fragment.favorites.FavoritesFragment
 import chanq.search_image.ui.main.fragment.result.SearchResultFragment
+import com.example.data.utils.PreferenceUtil.Companion.KEY_FAVORITE
+import com.example.detail.DetailActivity
+import com.example.detail.DetailActivity.Companion.KEY_IMG_URL
+import com.example.detail.DetailActivity.Companion.KEY_IS_FAVORITE
+import com.example.detail.DetailActivity.Companion.KEY_TITLE
+import com.example.detail.DetailActivity.Companion.RESULT_CODE_DETAIL
 import com.example.domain.model.CommonSearchResultData
 import com.example.domain.model.NetworkResult
 import com.example.search.SearchActivity
 import com.example.search.SearchActivity.Companion.KEY_SEARCH_STR
 import com.example.search.SearchActivity.Companion.RESULT_CODE_SEARCH
 import com.example.ui.common.BaseActivity
-import com.example.ui.common.PreferenceUtil.Companion.KEY_FAVORITE
 import com.example.ui.utils.L
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -33,6 +38,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private lateinit var pageAdapter: MainPageAdapter
 
     private var isLoading: Boolean = false
+
+    private var searchStr = ""
 
     private val viewModel by viewModels<MainViewModel>()
 
@@ -56,6 +63,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                 }
             }
+            RESULT_CODE_DETAIL -> {         // 상세 페이지
+
+            }
         }
     }
 
@@ -66,9 +76,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         initButtonClickListener()
 
         showLoading()
-        viewModel.fetchSearchImage( query = "고양이" )
+        searchStr = "고양이"
+        viewModel.fetchSearchImage( query = searchStr, isPageClear = true )
 
-        L.d("@@@@@@@ MY_FAVORITE : ${App.preferences.getString(KEY_FAVORITE, "")}")
+        L.d("@@@@@@@ MY_FAVORITE : ${App.preferences.getFavoriteList()}")
     }
 
     override fun initObserve() {
@@ -124,13 +135,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.isSelectedSearch = isSelectedSearch
 
         if (!binding.btnTabSearch.isSelected && isSelectedSearch) { // 검색 탭
+            showLoading()
             animTabBar(true)
             binding.vpMain.setCurrentItem(0, false)
+            viewModel.fetchSearchImage( query = searchStr, isPageClear = true )
         } else if (binding.vpMain.currentItem == 0 && isSelectedSearch) {   // 검색 탭 중복
             (fragmentList[0] as SearchResultFragment).moveScrollTop()
         } else if (!binding.btnTabFavorites.isSelected && !isSelectedSearch) {  // 즐겨찾기 탭
             animTabBar(false)
             binding.vpMain.setCurrentItem(1, false)
+            viewModel.getFavoritesList()
         }
     }
 
@@ -166,6 +180,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val searchStr = if (str == getString(R.string.feature_main_search_hint)) "" else str
         Intent(this, SearchActivity::class.java).apply {
             putExtra(KEY_SEARCH_STR, searchStr)
+            activityResultLauncher.launch(this)
+        }
+    }
+
+    /**
+     * 상세 페이지 호출
+     */
+    fun goDetailPage(item: CommonSearchResultData.CommonSearchData) {
+        Intent(this, DetailActivity::class.java).apply {
+            putExtra(KEY_TITLE, item.title)
+            putExtra(KEY_IMG_URL, item.imgUrl)
+            putExtra(KEY_IS_FAVORITE, item.isFavorite)
             activityResultLauncher.launch(this)
         }
     }

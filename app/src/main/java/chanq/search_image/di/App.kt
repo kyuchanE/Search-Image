@@ -1,7 +1,7 @@
 package chanq.search_image.di
 
 import android.app.Application
-import com.example.ui.common.PreferenceUtil
+import com.example.data.utils.PreferenceUtil
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
